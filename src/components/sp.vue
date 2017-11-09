@@ -158,6 +158,7 @@ export default {
         this.showModal('fail');
          clearInterval(this.timer);
          this.timer=null;
+         this.usedTime += (Date.now()-this.lastTimeStamp);
       }
       if (news==3){
         if (this.currIndex==4){
@@ -165,11 +166,13 @@ export default {
           
           clearInterval(this.timer);
           this.timer=null;
+          this.usedTime += (Date.now()-this.lastTimeStamp);
           return
         }
         this.showModal('succ');
         clearInterval(this.timer);
         this.timer=null;
+        this.usedTime += (Date.now()-this.lastTimeStamp);
       }
     },
     playLeave (news,olds) {
@@ -268,12 +271,13 @@ export default {
         return;
       }
       if (this.gameSta==1){
+        this.lastTimeStamp = Date.now();
         this.gameSta=2;
         let timer;
         !this.timer&&(this.timer = setInterval(()=>{
                   this.playLeave--;
 
-                  this.usedTime++;
+                  // this.usedTime++;
                   if (this.playLeave<=0){
                     this.gameSta!=3&&(this.gameSta=4)
                     clearInterval(this.timer);
@@ -441,7 +445,8 @@ export default {
       modeType:0,
       isAdd:false,
       inputUserPhone:'',
-      userPhone:''
+      userPhone:'',
+      lastTimeStamp:0
     }
   }
 }

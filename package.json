@@ -1,5 +1,5 @@
 {
-  "name": "huishang",
+  "name": "huishangFlip",
   "version": "1.0.0",
   "description": "A Vue.js project",
   "author": "DavidWangDong <190780806@qq.com>",
@@ -10,6 +10,7 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "chalk": "^2.3.0",
     "vue": "^2.5.2",
     "vue-router": "^3.0.1"
   },

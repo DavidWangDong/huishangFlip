@@ -20,7 +20,7 @@
                             {{val.name}}
                         </div>
                         <div class="prizeLeval">{{val.level|filName}}</div>
-                        <div class="prizeSecond">{{val.used}}s</div>
+                        <div class="prizeSecond">{{Math.floor(val.used/1000)}}s{{val.used%1000}}ms</div>
                     </div>
                  </div>
                  <div class="navPanel pos_abs">
@@ -132,7 +132,7 @@ export default {
   },
   data () {
     return {
-      imgs:['http://n.sinaimg.cn/ah/865fe30d/20171102/tpBg.png','http://n.sinaimg.cn/ah/865fe30d/20171024/prize1.png','http://n.sinaimg.cn/ah/865fe30d/20171024/prize2.png','http://n.sinaimg.cn/ah/865fe30d/20171024/prize3.png','http://n.sinaimg.cn/ah/865fe30d/20171024/XuHao.png'],
+      imgs:['http://n.sinaimg.cn/ah/865fe30d/20171102/tpBg.png','http://n.sinaimg.cn/ah/865fe30d/20171024/prize1.png','http://n.sinaimg.cn/ah/865fe30d/20171024/prize2.png','http://n.sinaimg.cn/ah/865fe30d/20171109/prize3.png','http://n.sinaimg.cn/ah/865fe30d/20171024/XuHao.png'],
       isLoading:true,
       progress:0,
       pageList:[1,2,3,4,5],
@@ -145,7 +145,7 @@ export default {
       ],
       currPage:1,
       maxPage:20,
-      prizePic:['http://n.sinaimg.cn/ah/865fe30d/20171024/prize1.png','http://n.sinaimg.cn/ah/865fe30d/20171024/prize2.png','http://n.sinaimg.cn/ah/865fe30d/20171024/prize3.png'],
+      prizePic:['http://n.sinaimg.cn/ah/865fe30d/20171024/prize1.png','http://n.sinaimg.cn/ah/865fe30d/20171024/prize2.png','http://n.sinaimg.cn/ah/865fe30d/20171109/prize3.png'],
     }
   }
 }
@@ -193,7 +193,7 @@ export default {
       margin-top: -0.2rem;
   }
   .prizeName,.prizeLeval{
-      width:1.2rem;
+      width:1.1rem;
       line-height: 0.33rem;
       font-size: 0.2rem;
       font-weight: bold;
