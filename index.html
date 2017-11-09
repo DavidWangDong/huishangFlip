@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>黄山信用卡带你“high翻天”</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, minimal-ui" />
+    <script type="text/javascript" src="http://n.sinaimg.cn/ah/js/jquery1.9.0.js"></script>
+		<link rel="stylesheet" type="text/css" href="http://ah.sina.com.cn/css/156/h5_animation.css">
+		<script>
+			var _hmt = _hmt || [];
+			(function() {
+			  var hm = document.createElement("script");
+			  hm.src = "https://hm.baidu.com/hm.js?d81a9253ce785f11e78877f800e98ecb";
+			  var s = document.getElementsByTagName("script")[0]; 
+			  s.parentNode.insertBefore(hm, s);
+			})();
+		</script>			
+  </head>
+
+ 
+
+  		
+  <script>
+	window.wx_id='ksdfsdfjlk';
+	window.wx_name='77天';
+	window.wx_avatar='http://tvax4.sinaimg.cn/default/images/default_avatar_male_180.gif';
+</script>
+
+  <body>
+    <div id="app"></div>
+    <!-- built files will be auto injected -->
+    <script type="text/javascript">
+    	fixHeight();
+		function fixHeight(){
+
+			var _oh=window.innerHeight/1136;
+			var _oW = window.innerWidth/640;//获取屏幕尺寸相对于设计稿尺寸比例
+			var r=_oW>_oh?_oh:_oW;
+			if(r>1){
+				$('html').css('font-size','100px');
+			}
+			else{
+				$('html').css('font-size',100*r+'px');
+			}
+			var r = document.body.offsetWidth / 640;
+			
+			$("body").height( window.innerHeight ); //修正整数页面高度
+		}
+		</script>
+		<!-- 微信自定义分享开始 -->
+
+<script src="http://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+<script type="text/javascript">
+  document.write('<script src="http:\/\/common.ah.sina.com.cn\/wechat\/wechatjs.php?url='+window.location.href.split('#')[0].replace(/&/g, '%26')+'"><\/script>');
+ //if(  window.location.search.substr(1).length > 20 ){
+ //window.location.href = 'http://ah.sina.com.cn/483/2016/0728/178.html';
+ //}
+
+ wx.ready(function () {
+	// window.vueApp&&window.vueApp.playAudio('http://n.sinaimg.cn/ah/865fe30d/20171026/bg.mp3');
+	console.log('wxReady');
+	if (window.vueApp){console.log(window.vueApp);window.vueApp.playAudio('bgAudio')}
+		// 分享到朋友圈
+	wx.onMenuShareTimeline({
+			title: "黄山信用卡带你“high翻天”", // 分享标题
+			link: "http://ahfensitong.com/huishang/fanpai/index.php", // 分享链接
+			imgUrl: "http://n.sinaimg.cn/ah/865fe30d/20171026/HuiXingFanPaiYouXi222.jpg", // 分享图标
+			success: function () { 
+					// 用户确认分享后执行的回调函数
+					// alert('分享成功');
+			},
+			cancel: function () { 
+					// 用户取消分享后执行的回调函数
+					// alert('分享取消');
+			}
+	});
+	
+	// 分享给朋友
+	wx.onMenuShareAppMessage({
+			title: "黄山信用卡带你“high翻天”", // 分享标题
+			desc: "玩游戏赢大奖，月月惊喜月月赚！", // 分享描述
+			link: "http://ahfensitong.com/huishang/fanpai/index.php", // 分享链接
+			imgUrl: "http://n.sinaimg.cn/ah/865fe30d/20171026/HuiXingFanPaiYouXi222.jpg", // 分享图标
+			type: 'link', // 分享类型,music、video或link，不填默认为link
+			dataUrl: '', // 如果type是music或video，则要提供数据链接，默认为空
+			success: function () { 
+					// 用户确认分享后执行的回调函数
+					// alert('分享朋友成功');
+			},
+			cancel: function () { 
+					// 用户取消分享后执行的回调函数
+					// alert('取消分享朋友');
+			}
+	});
+	
+	});
+
+wx.error(function (res) {
+  //alert(res.errMsg);
+});
+</script>
+
+  </body>
+</html>
