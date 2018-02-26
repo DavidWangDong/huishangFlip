@@ -189,7 +189,7 @@ export default {
       border-radius: 100%;
       background: #6b2500;
       overflow: hidden;
-      margin-left: 0.3rem;
+      margin-left: 0.15rem;
       margin-top: -0.2rem;
   }
   .prizeName,.prizeLeval{
