@@ -6,10 +6,10 @@
           </div>
           <div class="mainCont pos_rel" v-if ="!isLoading">
               <span class="pos_abs animate1 animate">
-                 <img src="http://n.sinaimg.cn/ah/865fe30d/20171023/logo1.png">
+                 <img src="http://n.sinaimg.cn/ah/865fe30d/20171023/logo1.png?ffgg">
               </span>
               <span class="pos_abs animate2 animate">
-                 <img src="http://n.sinaimg.cn/ah/865fe30d/20171023/1.png">
+                 <img src="http://n.sinaimg.cn/ah/865fe30d/20171023/1.png?ffgg">
               </span>
               <router-link class="pos_abs animate3 animate" to="/tp">
                  <img src="http://n.sinaimg.cn/ah/865fe30d/20171023/PaiXing.png">
@@ -32,7 +32,7 @@ export default {
   mixins:[mixin],
   data () {
     return {
-      imgs:["http://n.sinaimg.cn/ah/865fe30d/20171023/1.jpg","http://n.sinaimg.cn/ah/865fe30d/20171023/1.png","http://n.sinaimg.cn/ah/865fe30d/20171023/logo1.png","http://n.sinaimg.cn/ah/865fe30d/20171023/KaiShi.png","http://n.sinaimg.cn/ah/865fe30d/20171023/PaiXing.png","http://n.sinaimg.cn/ah/865fe30d/20171023/ShuoMing.png"],
+      imgs:["http://n.sinaimg.cn/ah/865fe30d/20171023/1.jpg","http://n.sinaimg.cn/ah/865fe30d/20171023/1.png?ffgg","http://n.sinaimg.cn/ah/865fe30d/20171023/logo1.png?ffgg","http://n.sinaimg.cn/ah/865fe30d/20171023/KaiShi.png","http://n.sinaimg.cn/ah/865fe30d/20171023/PaiXing.png","http://n.sinaimg.cn/ah/865fe30d/20171023/ShuoMing.png"],
       isLoading:true,
       progress:0,
     }
@@ -40,6 +40,7 @@ export default {
   methods :{
     toAndPlay(){
       window.vueChildren=this;
+      this.$parent.playAudio('bgAudio2')
       this.$parent.playAudio('m1');
       // this.$emit('play-music','m1');
       this.$router.push({path:'/sp'});
@@ -55,16 +56,16 @@ export default {
     background-size: 100% auto;
   }
   .animate1{
-    width: 3.37rem;
-    top:0.88rem;
-    left: 1.52rem;
+    width: 3.89rem;
+    top:0.84rem;
+    left: 1.22rem;
     opacity: 0;
     -webkit-animation:flipInX 1s ease-out .5s forwards;
   }
   .animate2{
-    width: 5.95rem;
-    top:1.88rem;
-    left: 0.2rem;
+    width: 6.5rem;
+    top:1.6rem;
+    left: -0.1rem;
     opacity: 0;
     -webkit-animation:zoomIn .5s ease-out 1s forwards;
   }

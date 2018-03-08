@@ -8,10 +8,10 @@
                <div class="pos_abs animate1 animate">
                  <img src="http://n.sinaimg.cn/ah/865fe30d/20171102/tpBg.png">
                  <div class="lister pos_abs">
-                    <div class="listerItem pos_rel before" v-for="(val,index) in dataList">
-                        <div :class="[{'prizeIcon':index<=2&&currPage<=1},{'prizeCount':index>2},'animate']">
-                            <img :src="prizePic[index]" alt="" v-if = "index<=2">
-                            {{index>2?index+1:''}}
+                    <div class="listerItem pos_rel before" v-for="(val,index) in dataList" :key="index">
+                        <div :class="[{'prizeIcon':index<=2&&currPage<=1},{'prizeCount':(currPage<=1&&index>2)||(currPage>1)},'animate']">
+                            <img :src="prizePic[index]" alt="" v-if = "index<=2&&currPage<=1">
+                            {{(currPage<=1&&index>2)?index+1:''}}{{(currPage>1)?((currPage-1)*10+index+1):''}}
                         </div>
                         <div class="prizeImg animate">
                             <img :src="val.avatar" alt="">
@@ -20,7 +20,7 @@
                             {{val.name}}
                         </div>
                         <div class="prizeLeval">{{val.level|filName}}</div>
-                        <div class="prizeSecond">{{Math.floor(val.used/1000)}}s{{val.used%1000}}ms</div>
+                        <div class="prizeSecond">{{Math.floor(val.used/1000)}}'{{val.used%1000}}"</div>
                     </div>
                  </div>
                  <div class="navPanel pos_abs">
@@ -139,7 +139,7 @@ export default {
       dataList:[
           {
               name:'测试1',
-              avatar:'https://avatars3.githubusercontent.com/u/3118295?v=4&s=120',
+              avatar:'http://thirdwx.qlogo.cn/mmopen/vi_32/DYAIOgq83eoicwtj6x3l7NOcqXNSNyZBacbJAkEI4cXHCfV7trz2kdLrwZIwia5rzc2NgU8avbbHTuYaUlel11Ew/132',
               used:20
           }
       ],

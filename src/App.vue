@@ -9,6 +9,7 @@ var myVue = {
   name: 'app',
   audioLoaded:0,
   bgAudio:null,
+  bg2Audio:null,
   m1:null,
   m2:null,
   m3:null,
@@ -25,7 +26,7 @@ var myVue = {
   },
   data(){
     return {
-      audioList:['http://n.sinaimg.cn/ah/865fe30d/20171026/bg.mp3','http://n.sinaimg.cn/ah/865fe30d/20171026/1.mp3','http://n.sinaimg.cn/ah/865fe30d/20171026/2.mp3','http://n.sinaimg.cn/ah/865fe30d/20171026/3.mp3','http://n.sinaimg.cn/ah/865fe30d/20171102/4.mp3'],
+      audioList:['http://n.sinaimg.cn/ah/865fe30d/20180308/bg.mp3','http://n.sinaimg.cn/ah/865fe30d/20180308/bg2.mp3','http://n.sinaimg.cn/ah/865fe30d/20180308/1.mp3','http://n.sinaimg.cn/ah/865fe30d/20171026/2.mp3','http://n.sinaimg.cn/ah/865fe30d/20171026/3.mp3','http://n.sinaimg.cn/ah/865fe30d/20171102/4.mp3'],
     }
   },
   watch:{
@@ -36,9 +37,9 @@ var myVue = {
   },
   methods:{
     playAudio(src){
-      console.log(src);
       if (src!='bgAudio'){
         this.bgAudio.pause();
+        this.bgAudio2.volume=0.5;
       }
       this[src].play();
     },
@@ -47,10 +48,14 @@ var myVue = {
         var audio = new Audio();
         audio.src=src;
         audio.preload=true;
-        if (src=="http://n.sinaimg.cn/ah/865fe30d/20171026/bg.mp3"){
+        if (src=="http://n.sinaimg.cn/ah/865fe30d/20180308/bg.mp3"){
           this.bgAudio=audio;
         }
-        if (src=="http://n.sinaimg.cn/ah/865fe30d/20171026/1.mp3"){
+        if (src=="http://n.sinaimg.cn/ah/865fe30d/20180308/bg2.mp3"){
+          audio.loop=true
+          this.bgAudio2=audio;
+        }
+        if (src=="http://n.sinaimg.cn/ah/865fe30d/20180308/1.mp3"){
           this.m1=audio;
         }
         if (src=="http://n.sinaimg.cn/ah/865fe30d/20171026/2.mp3"){
