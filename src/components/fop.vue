@@ -6,7 +6,7 @@
           </div>
           <div class="mainCont pos_rel" v-if ="!isLoading">
               <div class="pos_abs animate1 animate">
-                 <img src="http://n.sinaimg.cn/ah/865fe30d/20171024/shuoming.png?sdfds">
+                 <img src="http://n.sinaimg.cn/ah/865fe30d/20171024/shuoming.png?sdfdsgg">
               </div>
           </div>
       </div>
@@ -20,7 +20,7 @@ export default {
   mixins:[mixin],
   data () {
     return {
-      imgs:['http://n.sinaimg.cn/ah/865fe30d/20171024/shuoming.png?sdfds'],
+      imgs:['http://n.sinaimg.cn/ah/865fe30d/20171024/shuoming.png?sdfdsgg'],
       isLoading:true,
       progress:0,
     }

@@ -39,27 +39,7 @@ export default {
   name: 'tp',
   mixins:[mixin],
   created(){
-      $.ajax({
-          url:'http://ahfensitong.com/huishang/fanpai/api.php?action=getUsers',
-          type:'GET',
-          data:{page:this.page,jsonp:1},
-          dataType:'jsonp',
-          success:(data)=>{
-              console.log(data);
-              if (data.error!=0){
-                  alert('网络错误!');
-                  return;
-              }
-              this.maxPage=data.maxPage+1;
-              if (data.data.length>0){
-                  this.dataList.length=0;
-                  data.data.forEach((val)=>{
-                      this.dataList.push(val);
-                  })
-              }
-              this.reSetNav(this.currPage);
-          }
-      })
+     this.getDataList();
       
   },
   computed:{
@@ -123,6 +103,29 @@ export default {
               return;
           }
           this.currPage = page;
+          this.getDataList();
+      },
+      getDataList (){
+          $.ajax({
+          url:'http://ahfensitong.com/huishang/fanpai/api.php?action=getUsers',
+          type:'GET',
+          data:{page:this.currPage,jsonp:1},
+          dataType:'jsonp',
+          success:(data)=>{
+              if (data.error!=0){
+                  alert('网络错误!');
+                  return;
+              }
+              this.maxPage=data.maxPage;
+              if (data.data.length>0){
+                  this.dataList.length=0;
+                  data.data.forEach((val)=>{
+                      this.dataList.push(val);
+                  })
+              }
+              this.reSetNav(this.currPage);
+          }
+      })
       }
   },
   watch:{

@@ -401,35 +401,35 @@ export default {
       pointPic:["http://n.sinaimg.cn/ah/865fe30d/20171023/round1.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round2.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round3.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round4.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round5.png"],
       Checkpoint:[
         {
-          obTime:2000,
+          obTime:1000,
           useTime:20000,
           rows:2,
           cols:4,
           pics:[]
         },
         {
-          obTime:3000,
+          obTime:2000,
           useTime:20000,
           rows:3,
           cols:4,
           pics:[]
         },
         {
-          obTime:5000,
+          obTime:3000,
           useTime:30000,
           rows:4,
           cols:4,
           pics:[]
         },
         {
-          obTime:7000,
+          obTime:4000,
           useTime:60000,
           rows:5,
           cols:4,
           pics:[]
         },
         {
-          obTime:9000,
+          obTime:5000,
           useTime:100000,
           rows:6,
           cols:5,
