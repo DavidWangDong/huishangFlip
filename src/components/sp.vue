@@ -6,10 +6,23 @@
               <input v-model="inputUserPhone" v-if = "userPhone==''" class="getedPhone pos_abs" placeholder="留下手机号参与排名">
               <span class="pos_abs failBTn resBtn" @click="subInfo"></span>
           </div>
+
+
           <div class="succMsg pos_abs animate" v-if ="modalView=='succ'">
               <img src="http://n.sinaimg.cn/ah/865fe30d/20171023/succ.png">
               <span class="pos_abs succBTn resBtn" @click="nextPoint"></span>
           </div>
+          
+          <div class="alertMsg pos_abs animate" v-if ="modalView=='alert'">
+              <img :src="detailSrc">
+              <span class="pos_abs startBtn resBtn" @click="isShowDetail=false"></span>
+          </div>
+
+          <div class="frozen pos_abs animate" v-if ="modalView=='frozen'" @click.stop.prevent="blank">
+              <img src="http://n.sinaimg.cn/ah/865fe30d/20180328/frozen.png">
+          </div>
+
+
       </div>
       <div class="pageInner pos_rel">
           <div class="loading pos_abs" v-if = "isLoading">
@@ -26,7 +39,7 @@
                 <div class="listInner before pos_rel">
                     
                     <ul class="list before" ref="contains">
-                     <li v-for="(val,index) in currCp.pics" :class="['listItem','animate',{'act':val.act},{itemSpecial:currIndex>=4},{hasFlip:val.act},{fliped:val.isFlip}]"  @click = "flip(val,index)" :ref="'item'+val.index+val.sortIdx" :key="index">
+                     <li v-for="(val,index) in currCp.pics" :class="['listItem','animate',{'act':val.act},{itemSpecial:Checkpoint[currIndex].cols>=5},{hasFlip:val.act},{fliped:val.isFlip}]"  @click = "flip(val,index)" :ref="'item'+val.index+val.sortIdx" :key="index">
                         <div class="outer pos_rel">
                           <div class="back animate pos_abs">
                             <img src="http://n.sinaimg.cn/ah/865fe30d/20171023/gb.png">
@@ -60,10 +73,13 @@
 
 <script>
 import mixin from '@/mixin/'
+import {beforeList,afterList,beforeGetCorrectIndex} from '@/eventList'
 export default {
   name: 'sp',
   mixins:[mixin],
   created(){
+      // 默认第几关
+      this.currIndex = 5 ;
       let openId = window.wx_id;
       $.ajax({
           url:'http://ahfensitong.com/huishang/fanpai/api.php?action=getMobile',
@@ -71,7 +87,7 @@ export default {
           data:{openid:openId,jsonp:1},
           dataType:'jsonp',
           success:(data)=>{
-              console.log(data);
+              
               if (data.error!=0){
                   alert('网络错误!');
                   return;
@@ -83,6 +99,11 @@ export default {
               }
           }
       })
+
+    this.eventList.before_dispath = this.create_chains(this.eventList.beforeList)
+    this.eventList.beforeGetCorrectIndex_dispath = this.create_chains(this.eventList.beforeGetCorrectIndex)
+    this.eventList.after_dispath = this.create_chains(this.eventList.afterValidateList)
+
   },
   mounted () {
     if (this.loadImgFlag==true){
@@ -98,64 +119,13 @@ export default {
       if (news == 2){
         var item2 = this.tmpCache[1];
         var dom2 = $(this.$refs['item'+item2.index+item2.sortIdx][0]);
-      //   if (item1.index == item2.correctIndex){
-      //    this.$emit('play-music','m2');
-      //  }else{
-      //    this.$emit('play-music','m3');
-      //  }
+      
       }
-      // dom1.addClass('hasFlip')
-      // dom2&&dom2.addClass('hasFlip')
+
       item1.act=true;
       item2&&(item2.act=true);
-       
-      setTimeout(()=>{
-        if (news == 2){
-          if (item1.index == item2.correctIndex){
-            // dom1.addClass('fliped')
-            // dom2.addClass('fliped')
-            item1.isFlip = true
-            item2.isFlip = true
-            // this.$emit('play-music','m2');
-            if (item1.index==3||item1.index==9){
-                this.modeType=0;
-                this.isActiveMode=true;
-                this.isAdd=true;
-                this.playLeave+=2;
-                this.currCp.useTime+=2000;
-              setTimeout(()=>{
-                this.isActiveMode=false;
-              },1800)
-              setTimeout(()=>{
-                 this.isAdd=false;
-              },800)
-            }
-            if (item1.index==13||item1.index==0){
-                this.modeType=1;
-                this.isActiveMode=true;
-              this.isAdd=true;
-              this.playLeave+=2;
-              this.currCp.useTime+=2000;
-              setTimeout(()=>{
-                this.isActiveMode=false;
-              },1800)
-              setTimeout(()=>{
-                 this.isAdd=false;
-              },800)
-            }
-            this.leaveCouple--;
-          }else{
-            // this.$emit('play-music','m3');
-            // $(this.$refs['item'+item1.index+item1.sortIdx][0]).removeClass('act').removeClass('hasFlip')
-            // $(this.$refs['item'+item2.index+item2.sortIdx][0]).removeClass('act').removeClass('hasFlip')
-            item1.isFlip = false
-            item2.isFlip = false
-            item1.act = false
-            item2.act = false
-          }
-          this.tmpCache.length=0;
-        }
-      },300)
+
+      this.eventList.after_dispath(news,item1,item2);
       
     },
     leaveCouple(news,old){
@@ -168,10 +138,9 @@ export default {
         this.showModal('fail');
          clearInterval(this.timer);
          this.timer=null;
-        //  this.usedTime += (Date.now()-this.lastTimeStamp);
       }
       if (news==3){
-        if (this.currIndex==4){
+        if (this.currIndex==(this.Checkpoint.length-1)){
           this.sendGrade(true);
           
           clearInterval(this.timer);
@@ -197,6 +166,9 @@ export default {
     }
   },
   methods :{
+    blank (){
+
+    },
     subInfo () {
       this.sendGrade (false,()=>{
         if (this.inputUserPhone){
@@ -261,10 +233,8 @@ export default {
       })
     },
     nextPoint (){
-      this.currIndex<4&&this.currIndex++;
+      (this.currIndex<this.Checkpoint.length-1)&&this.currIndex++;
       this.currCp.pics.forEach((val)=>{
-            //  $(this.$refs['item'+val.index+val.sortIdx][0]).removeClass('fliped');
-            //  $(this.$refs['item'+val.index+val.sortIdx][0]).removeClass('hasFlip');
             val.isFlip=false
             val.act=false
       })
@@ -298,7 +268,6 @@ export default {
                   }
                 },1000))
       }
-      // let item=$(this.$refs['item'+val.index+index][0])
       if (val.act){
         return;
       }
@@ -306,10 +275,8 @@ export default {
       this.stepSta=this.tmpCache.length;
       val.act = true
       var item1 = this.tmpCache[0];
-      // var dom1 = $(this.$refs['item'+item1.index+item1.sortIdx][0]);
       if (this.stepSta == 2){
         var item2 = this.tmpCache[1];
-        // var dom2 = $(this.$refs['item'+item2.index+item2.sortIdx][0]);
         if (item1.index == item2.correctIndex){
          if ([3,9,13,0].indexOf(item1.index)>-1){
            this.$parent.playAudio('m4');
@@ -329,6 +296,7 @@ export default {
             this.currCp['pics'].length=0;
             let count = source['rows']*source['cols']/2;
             let tmpArr = this.getPics(count);
+            
             let tmpArr2 = JSON.parse(JSON.stringify(tmpArr));
             let index;
             this.leaveCouple = tmpArr2.length;
@@ -342,36 +310,22 @@ export default {
               }
               tmpArr.push(innerTmp);
             }
+            
             tmpArr.forEach((item,index)=>{
               item.sortIdx = index;
               this.currCp.pics.push(item);
             })
+
+           
           }else{
            target[item] = source[item];
           }
           
       })
-      let timer;
-      timer = setInterval(()=>{
-        this.StartLeaveTime>0&&this.StartLeaveTime--;
-        if (this.StartLeaveTime==0){
-          this.gameSta=1;
-          clearInterval(timer);
-          timer=null;
-          this.currCp.pics.forEach((val)=>{
-            // $(this.$refs['item'+val.index+val.sortIdx][0]).removeClass('act');
-            //  $(this.$refs['item'+val.index+val.sortIdx][0]).removeClass('fliped');
-            val.act = false;
-          })
-          this.isPreview=false;
-        }
-      },1000)
-      $(this.$refs['contains']).css({'margin-top':(6.9-this.currCp.rows*1.3)/2+'rem',width:1.26*this.currCp.cols+'rem'})
-      this.currIndex>=4&&$(this.$refs['contains']).css({'margin-top':(6.9-this.currCp.rows*1.1)/2+'rem',width:1.1*this.currCp.cols+'rem'})
-      this.StartLeaveTime = this.currCp.obTime/1000;
-      this.playLeave = this.currCp.useTime/1000;
-      this.tmpCache.length=0;
-      this.isPreview=true;
+      
+      this.eventList.before_dispath();
+      
+      
     },
     getPics (count) {
 
@@ -383,67 +337,128 @@ export default {
         count--;
         let src = sourceArr.splice(index,1)[0];
         let trueIndex = this.matePic.indexOf(src);
-        let correctIndex;
-        correctIndex=trueIndex==3?9:
-        trueIndex==9?3:
-        trueIndex==0?13:
-        trueIndex==13?0:
-        trueIndex;
-        tmpArr.push({index:this.matePic.indexOf(src),src:src,correctIndex:correctIndex,act:true,isFlip:false});
+        const correctIndex = {correctIndex:''};
+        // 抽取对应卡片
+        let hash = {
+            3:9,
+            9:3,
+            0:13,
+            13:0
+        }
+        if (trueIndex in hash) {
+            correctIndex.correctIndex = hash[trueIndex]
+        }else{
+            correctIndex.correctIndex = trueIndex;
+        }
+        tmpArr.push({index:this.matePic.indexOf(src),src:src,correctIndex:correctIndex.correctIndex,act:true,isFlip:false});
+        
       }
+      this.eventList.beforeGetCorrectIndex_dispath(tmpArr);
       return JSON.parse(JSON.stringify(tmpArr));
+    },
+
+    // 工具
+
+    create_chains (arr) {
+          
+          let tmpFuncArr = [];
+          for (let i=0,len = arr.length-1;i<=len;i++){
+              if (i==0){
+                tmpFuncArr.unshift(arr[len].bind(this,function(){}))
+              }else{
+                let func = arr[len-i].bind(this,tmpFuncArr[0])
+                tmpFuncArr.unshift(func)
+              }
+          }
+          return tmpFuncArr[0];
     }
   },
   data () {
     return {
-      imgs:["http://n.sinaimg.cn/ah/865fe30d/20180308/2Miao.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g1.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g2.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g3.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g4.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g5.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g6.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g7.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g8.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g9.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g10.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g11.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g12.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g13.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g14.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g15.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round1.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round2.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round3.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round4.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round5.png","http://n.sinaimg.cn/ah/865fe30d/20171023/2bg.png","http://n.sinaimg.cn/ah/865fe30d/20171023/2.jpg",'http://n.sinaimg.cn/ah/865fe30d/20171023/gb.png','http://n.sinaimg.cn/ah/865fe30d/20171023/fail.png','http://n.sinaimg.cn/ah/865fe30d/20171102/fail22222.png',"http://n.sinaimg.cn/ah/865fe30d/20180123/g16.png","http://n.sinaimg.cn/ah/865fe30d/20180123/g17.png"],
+      imgs:['http://n.sinaimg.cn/ah/865fe30d/20180328/frozen.png',"http://n.sinaimg.cn/ah/865fe30d/20180330/round6.png","http://n.sinaimg.cn/ah/865fe30d/20180330/round7.png","http://n.sinaimg.cn/ah/865fe30d/20180330/round8.png","http://n.sinaimg.cn/ah/865fe30d/20180328/alertDetail.png","http://n.sinaimg.cn/ah/865fe30d/20180308/2Miao.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g1.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g2.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g3.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g4.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g5.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g6.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g7.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g8.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g9.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g10.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g11.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g12.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g13.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g14.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g15.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round1.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round2.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round3.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round4.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round5.png","http://n.sinaimg.cn/ah/865fe30d/20171023/2bg.png","http://n.sinaimg.cn/ah/865fe30d/20171023/2.jpg",'http://n.sinaimg.cn/ah/865fe30d/20171023/gb.png','http://n.sinaimg.cn/ah/865fe30d/20171023/fail.png','http://n.sinaimg.cn/ah/865fe30d/20171102/fail22222.png',"http://n.sinaimg.cn/ah/865fe30d/20180123/g16.png","http://n.sinaimg.cn/ah/865fe30d/20180123/g17.png","http://n.sinaimg.cn/ah/865fe30d/20180328/g18.png"],
       matePic:["http://n.sinaimg.cn/ah/865fe30d/20171023/g1.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g2.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g3.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g4.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g5.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g6.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g7.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g8.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g9.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g10.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g11.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g12.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g13.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g14.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g15.png","http://n.sinaimg.cn/ah/865fe30d/20180123/g16.png","http://n.sinaimg.cn/ah/865fe30d/20180123/g17.png"],
-      pointPic:["http://n.sinaimg.cn/ah/865fe30d/20171023/round1.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round2.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round3.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round4.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round5.png"],
+      pointPic:["http://n.sinaimg.cn/ah/865fe30d/20171023/round1.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round2.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round3.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round4.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round5.png","http://n.sinaimg.cn/ah/865fe30d/20180330/round6.png","http://n.sinaimg.cn/ah/865fe30d/20180330/round7.png","http://n.sinaimg.cn/ah/865fe30d/20180330/round8.png"],
       Checkpoint:[
         {
           obTime:1000,
           useTime:20000,
           rows:2,
           cols:4,
-          pics:[]
+          pics:[],
+          showAlert:false,
+          detailSrc:'http://n.sinaimg.cn/ah/865fe30d/20180328/alertDetail.png'
         },
         {
           obTime:2000,
           useTime:20000,
           rows:3,
           cols:4,
-          pics:[]
+          pics:[],
+          showAlert:false,
+          detailSrc:''
         },
         {
           obTime:3000,
           useTime:30000,
           rows:4,
           cols:4,
-          pics:[]
+          pics:[],
+          showAlert:false,
+          detailSrc:''
         },
         {
           obTime:4000,
           useTime:60000,
           rows:5,
           cols:4,
-          pics:[]
+          pics:[],
+          showAlert:false,
+          detailSrc:''
         },
         {
           obTime:5000,
           useTime:100000,
           rows:6,
           cols:5,
-          pics:[]
-        },
+          pics:[],
+          showAlert:false,
+          detailSrc:''
+        },{
+          obTime:2000,
+          useTime:20000,
+          rows:3,
+          cols:4,
+          pics:[],
+          showAlert:true,
+          detailSrc:'http://n.sinaimg.cn/ah/865fe30d/20180328/alertDetail.png'
+        },{
+          obTime:4000,
+          useTime:60000,
+          rows:5,
+          cols:4,
+          pics:[],
+          showAlert:false,
+          detailSrc:''
+        },{
+          obTime:5000,
+          useTime:100000,
+          rows:6,
+          cols:5,
+          pics:[],
+          showAlert:false,
+          detailSrc:''
+        }
       ],
       currCp:{
           obTime:3000,
           useTime:5000,
           rows:2,
           cols:5,
-          pics:[]
+          pics:[],
+          showAlert:false,
+          detailSrc:'http://n.sinaimg.cn/ah/865fe30d/20180328/alertDetail.png'
       },
-      currIndex:0,
+      currIndex:-1,
       gameSta:0,//0:游戏准备中,1:游戏已准备好,可以开始，2、游戏正在进行中，3、游戏结束(完成)，4、游戏结束(未完成)
       stepSta:0,//0:一个未点，1：点了一个，2：点了两个
       tmpCache:[],
@@ -452,7 +467,7 @@ export default {
       isPreview:true,
       timer:null,
       isShowModal:false,
-      modalView:'fail',
+      modalView:'frozen',
       leaveCouple:-1,
       usedTime:0,
       mountedFlag:false,
@@ -462,7 +477,22 @@ export default {
       isAdd:false,
       inputUserPhone:'',
       userPhone:'',
-      lastTimeStamp:0
+      lastTimeStamp:0,
+      // 当前通知图片地址
+      detailSrc:'http://n.sinaimg.cn/ah/865fe30d/20180328/alertDetail.png',
+
+      // 是否显示通知
+
+      isShowDetail:'',
+      // 处理队列
+      eventList:{
+        beforeList:beforeList,
+        afterValidateList:afterList,
+        beforeGetCorrectIndex:beforeGetCorrectIndex,
+        before_dispath:null,
+        after_dispath:null,
+        beforeGetCorrectIndex_dispath:null
+      },
     }
   }
 }
@@ -627,5 +657,23 @@ export default {
     line-height: 0.56rem;
     box-shadow: 0px 2px #fd9700;
 
+  }
+  .alertMsg{
+    width:5.67rem;
+    height:6.3rem;
+    top:50%;
+    margin-top:-3.15rem;
+    left:50%;
+    margin-left:-2.835rem;
+  }
+  .startBtn{
+    bottom:0.4rem;
+    left:1.52rem;
+    top:auto;
+  }
+  .frozen{
+    width:100%;
+    top:0;
+    left:0;
   }
 </style>

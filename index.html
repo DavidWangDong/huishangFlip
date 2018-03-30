@@ -17,9 +17,7 @@
 		</script>			
   </head>
 
-
-
-	<?php
+<?php
   
 			  include_once('./authorization.php');
 			  $pagei = isset($_GET['page'])&&$_GET['page'] ? $_GET['page'] : 1;
@@ -40,17 +38,13 @@
 					  $headimgurl = $_SESSION['wx_headimgurl'];
 			  }
   ?>
+  <script>
+    window.wx_id = '<?php echo $wx_id;?>';
+    window.wx_name = '<?php echo $wx_name;?>';
+    window.wx_avatar = '<?php echo $headimgurl;?>';
 
+  </script>
 
-
-
-
-
-<script>
-		window.wx_id = '<?php echo $wx_id;?>';
-		window.wx_name = '<?php echo $wx_name;?>';
-		window.wx_avatar = '<?php echo $headimgurl;?>';
-</script>
 
   <body>
     <div id="app"></div>
