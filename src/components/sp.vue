@@ -79,7 +79,7 @@ export default {
   mixins:[mixin],
   created(){
       // 默认第几关
-      this.currIndex = 5 ;
+      this.currIndex = 0 ;
       let openId = window.wx_id;
       $.ajax({
           url:'http://ahfensitong.com/huishang/fanpai/api.php?action=getMobile',
@@ -141,11 +141,10 @@ export default {
       }
       if (news==3){
         if (this.currIndex==(this.Checkpoint.length-1)){
+          this.usedTime += (Date.now()-this.lastTimeStamp);
           this.sendGrade(true);
-          
           clearInterval(this.timer);
           this.timer=null;
-          this.usedTime += (Date.now()-this.lastTimeStamp);
           return
         }
         this.showModal('succ');
@@ -171,7 +170,7 @@ export default {
     },
     subInfo () {
       this.sendGrade (false,()=>{
-        if (this.inputUserPhone){
+        if (!this.userPhone){
           this.subPhone();
         }else{
           this.$router.push({path:'/'});
@@ -191,6 +190,7 @@ export default {
               data:{mobile:this.inputUserPhone,jsonp:1,openid:window.wx_id},
               dataType:'jsonp',
               success:(data)=>{
+
                   this.$router.push({path:'/'});
                   if (data.error!=0){
                       alert('网络错误');
@@ -208,7 +208,7 @@ export default {
         name:window.wx_name,
         avatar:window.wx_avatar,
         used:this.usedTime,
-        level:this.currIndex+1,
+        level:this.gameSta==3?(this.currIndex+1):this.currIndex,
         status:this.gameSta==3?1:0,
         jsonp:1
       }
@@ -432,16 +432,16 @@ export default {
           showAlert:true,
           detailSrc:'http://n.sinaimg.cn/ah/865fe30d/20180328/alertDetail.png'
         },{
-          obTime:4000,
-          useTime:60000,
+          obTime:2000,
+          useTime:40000,
           rows:5,
           cols:4,
           pics:[],
           showAlert:false,
           detailSrc:''
         },{
-          obTime:5000,
-          useTime:100000,
+          obTime:3000,
+          useTime:80000,
           rows:6,
           cols:5,
           pics:[],

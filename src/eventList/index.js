@@ -164,7 +164,7 @@ afterList.push(function(next,flag,item1,item2){
         
         this.showModal('frozen');
         timeout(2000).then(()=>{
-            this.hideModal()
+            this.playLeave>0&&this.hideModal();
         })
     }
     next(flag,item1,item2);

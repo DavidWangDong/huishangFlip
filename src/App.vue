@@ -26,7 +26,7 @@ var myVue = {
   },
   data(){
     return {
-      audioList:['http://n.sinaimg.cn/ah/865fe30d/20180308/bg.mp3','http://n.sinaimg.cn/ah/865fe30d/20180308/bg2.mp3','http://n.sinaimg.cn/ah/865fe30d/20180308/1.mp3','http://n.sinaimg.cn/ah/865fe30d/20171026/2.mp3','http://n.sinaimg.cn/ah/865fe30d/20171026/3.mp3','http://n.sinaimg.cn/ah/865fe30d/20171102/4.mp3'],
+      audioList:['http://n.sinaimg.cn/ah/865fe30d/20180308/bg.mp3','http://n.sinaimg.cn/ah/865fe30d/20180308/bg2.mp3','http://n.sinaimg.cn/ah/865fe30d/20180308/1.mp3','http://n.sinaimg.cn/ah/865fe30d/20171026/2.mp3?dfdfd','http://n.sinaimg.cn/ah/865fe30d/20171026/3.mp3','http://n.sinaimg.cn/ah/865fe30d/20171102/4.mp3'],
     }
   },
   watch:{
@@ -49,6 +49,7 @@ var myVue = {
         audio.src=src;
         audio.preload=true;
         if (src=="http://n.sinaimg.cn/ah/865fe30d/20180308/bg.mp3"){
+          audio.loop=true;
           this.bgAudio=audio;
         }
         if (src=="http://n.sinaimg.cn/ah/865fe30d/20180308/bg2.mp3"){
@@ -58,7 +59,7 @@ var myVue = {
         if (src=="http://n.sinaimg.cn/ah/865fe30d/20180308/1.mp3"){
           this.m1=audio;
         }
-        if (src=="http://n.sinaimg.cn/ah/865fe30d/20171026/2.mp3"){
+        if (src=="http://n.sinaimg.cn/ah/865fe30d/20171026/2.mp3?dfdfd"){
           this.m2=audio;
         }
         if (src=="http://n.sinaimg.cn/ah/865fe30d/20171026/3.mp3"){
@@ -142,5 +143,13 @@ img{
   .before:before{
     content: '';
     display: table;
+  }
+
+
+  .zoomIn-enter-active {
+    animation: zoomIn .6s;
+  }
+  .zoomIn-leave-active {
+    animation: zoomIn .6s reverse;
   }
 </style>

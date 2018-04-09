@@ -1,5 +1,41 @@
 <template>
-  <div class="page">
+  <div class="page pos_rel">
+      <transition name="zoomIn">
+        <div class="modal pos_abs" v-if="isShowSelf">
+            <div class="selfInfo pos_abs before">
+                <div class="user_info">
+                    <div class="avatar animate">
+                        <img :src="user_avatar" alt="">
+                    </div>
+                    <div class="record_info">
+                        <span class="user_name">
+                            {{user_name}}
+                        </span>
+                        <span class="record_leval">
+                             {{record_leval|filName}}
+                        </span>
+                        <span class="use_time">
+                            {{use_time/1000}}s
+                        </span>
+                    </div>
+                </div>
+                <div class="detail_word">
+                    <p v-if="order_num>100">
+                        您的当前排名是{{order_num}}，<br>
+                        很遗憾未进入前100，请继续努力！
+                    </p>
+                    <p v-else>
+                         您的当前排名是{{order_num}}，<br>
+                         真厉害，请继续保持！
+                    </p>
+                </div>
+                <span class="info_close pos_abs" @click.self="isShowSelf=false">
+
+                </span>
+            </div>
+           
+        </div>
+    </transition>
       <div class="pageInner pos_rel">
           <div class="loading pos_abs" v-if = "isLoading">
               加载中,请稍候....(已加载{{progress}}%)
@@ -40,7 +76,7 @@ export default {
   mixins:[mixin],
   created(){
      this.getDataList();
-      
+     this.getInfo();
   },
   computed:{
       getList () {
@@ -49,8 +85,9 @@ export default {
   },
   filters:{
       filName(number){
-          let list = ['第一关','第二关','第三关','第四关','第五关']
-          return list[number-1];
+          const  idx = number-1>0?number-1:0;
+          let list = ['第一关','第二关','第三关','第四关','第五关','第六关','第七关','第八关']
+          return list[idx];
       }
   },
   methods:{
@@ -105,6 +142,25 @@ export default {
           this.currPage = page;
           this.getDataList();
       },
+      getInfo (){
+          $.ajax({
+              url:'http://ahfensitong.com/huishang/fanpai/api.php?action=getMobile',
+              type:'GET',
+              data:{openid:window.wx_id,jsonp:1},
+              dataType:'jsonp',
+              success:(data)=>{
+                  if (data.error==0&&data.data!=='NO'){
+                      setTimeout(() => {
+                        let {used,level,order} = data.info;
+                        this.use_time = used
+                        this.order_num = parseInt(order)+1
+                        this.record_leval = level
+                        this.isShowSelf=true;    
+                      }, 200);
+                  }
+              }
+          })
+      },
       getDataList (){
           $.ajax({
           url:'http://ahfensitong.com/huishang/fanpai/api.php?action=getUsers',
@@ -135,10 +191,16 @@ export default {
   },
   data () {
     return {
-      imgs:['http://n.sinaimg.cn/ah/865fe30d/20171102/tpBg.png','http://n.sinaimg.cn/ah/865fe30d/20171024/prize1.png','http://n.sinaimg.cn/ah/865fe30d/20171024/prize2.png','http://n.sinaimg.cn/ah/865fe30d/20171109/prize3.png','http://n.sinaimg.cn/ah/865fe30d/20171024/XuHao.png'],
+      imgs:['http://n.sinaimg.cn/ah/865fe30d/20180408/PaiMingDanChuang.png','http://n.sinaimg.cn/ah/865fe30d/20171102/tpBg.png','http://n.sinaimg.cn/ah/865fe30d/20171024/prize1.png','http://n.sinaimg.cn/ah/865fe30d/20171024/prize2.png','http://n.sinaimg.cn/ah/865fe30d/20171109/prize3.png','http://n.sinaimg.cn/ah/865fe30d/20171024/XuHao.png'],
       isLoading:true,
       progress:0,
       pageList:[1,2,3,4,5],
+      isShowSelf:false,
+      user_avatar:window.wx_avatar,
+      user_name:window.wx_name,
+      record_leval:2,
+      use_time:6300,
+      order_num:50,
       dataList:[
           {
               name:'测试1',
@@ -254,5 +316,74 @@ export default {
       font-size: 0.2rem;
       box-shadow: 2px 2px 2px #ff4e04;
       background: #ffa71b;
+  }
+  .modal{
+      width:100%;
+      height: 100%;
+      z-index:1000;
+      background:rgba(0,0,0,0.5);
+
+  }
+  .selfInfo{
+      width:6.03rem;
+      height: 5.45rem;
+      top:50%;
+      left: 50%;
+      margin-top:-2.725rem;
+      margin-left:-3.015rem;
+      background:url(http://n.sinaimg.cn/ah/865fe30d/20180408/PaiMingDanChuang.png) no-repeat center top;
+      background-size:100% auto;
+  }
+  .user_info{
+      padding-top:1.29rem;
+      padding-left: 1.2rem;
+      overflow:hidden;
+  }
+  .avatar{
+      width:0.91rem;
+      height:0.91rem;
+      border-radius: 100%;
+      overflow:hidden;
+      float: left;
+  }
+  .record_info{
+      width:3rem;
+      float: left;
+      margin-left:0.14rem;
+      padding-top:0.13rem;
+      font-size:0;
+      text-align:left;
+  }
+  .user_name{
+      font-size:0.3rem;
+      color:#6b2500;
+      font-weight:bold;
+  }
+  .record_leval{
+      font-size:0.3rem;
+      color:#6b2500;
+      margin:0 0.1rem;
+  }
+  .use_time{
+      font-size:0.3rem;
+      color:#6b2500;
+  }
+  .detail_word{
+      width:5.14rem;
+      margin-top:0.6rem;
+      margin-left:0.75rem;
+      font-size:0.3rem;
+      font-weight:bold;
+      text-align:center;
+      line-height: 0.5rem;
+  }
+  .detail_word p{
+      color:#ff0000;
+  }
+  .info_close{
+      width:0.68rem;
+      height: 0.68rem;
+      top:0.6rem;
+      right:0.1rem;
   }
 </style>
