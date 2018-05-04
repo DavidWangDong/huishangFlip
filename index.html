@@ -51,7 +51,13 @@
   <body>
     <div id="app"></div>
     <!-- built files will be auto injected -->
-    <script type="text/javascript">
+		<script type="text/javascript">
+		
+			$('body').on('click',function (e) {
+				 e.stopPropagation();
+				 e.preventDefault();
+			})
+
     	fixHeight();
 		function fixHeight(){
 

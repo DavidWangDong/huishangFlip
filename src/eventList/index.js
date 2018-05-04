@@ -80,6 +80,18 @@ beforeList.push(function(next, arg) {
     this.StartLeaveTime > 0 && this.StartLeaveTime--;
     if (this.StartLeaveTime == 0) {
       this.gameSta = 1;
+       if (this.gameSta == 1) {
+         this.lastTimeStamp = Date.now();
+         this.gameSta = 2;
+         !this.timer && (this.timer = setInterval(() => {
+             this.playLeave--;
+             if (this.playLeave <= 0) {
+               this.gameSta != 3 && (this.gameSta = 4);
+               clearInterval(this.timer);
+               this.timer = null;
+             }
+           }, 1000));
+       }
       clearInterval(timer);
       timer = null;
       this.currCp.pics.forEach(val => {

@@ -12,7 +12,7 @@
                             {{user_name}}
                         </span>
                         <span class="record_leval">
-                             {{record_leval|filName}}
+                             {{(status>0?record_leval:(record_leval-1))|filName}}
                         </span>
                         <span class="use_time">
                             {{use_time/1000}}s
@@ -42,7 +42,7 @@
           </div>
           <div class="mainCont pos_rel" v-if ="!isLoading">
                <div class="pos_abs animate1 animate">
-                 <img src="http://n.sinaimg.cn/ah/865fe30d/20171102/tpBg.png">
+                 <img src="http://n.sinaimg.cn/ah/865fe30d/20171102/tpBg.png?12345">
                  <div class="lister pos_abs">
                     <div class="listerItem pos_rel before" v-for="(val,index) in dataList" :key="index">
                         <div :class="[{'prizeIcon':index<=2&&currPage<=1},{'prizeCount':(currPage<=1&&index>2)||(currPage>1)},'animate']">
@@ -55,7 +55,7 @@
                         <div class="prizeName">
                             {{val.name}}
                         </div>
-                        <div class="prizeLeval">{{val.level|filName}}</div>
+                        <div class="prizeLeval">{{(val.status>0?val.level:(val.level-1))|filName}}</div>
                         <div class="prizeSecond">{{Math.floor(val.used/1000)}}'{{val.used%1000}}"</div>
                     </div>
                  </div>
@@ -149,12 +149,14 @@ export default {
               data:{openid:window.wx_id,jsonp:1},
               dataType:'jsonp',
               success:(data)=>{
-                  if (data.error==0&&data.data!=='NO'){
+                  console.log(data);
+                  if (data.error==0&&data.data!=='NO'&&data.data!==''){
                       setTimeout(() => {
-                        let {used,level,order} = data.info;
+                        let {used,level,order,status} = data.info;
                         this.use_time = used
                         this.order_num = parseInt(order)+1
                         this.record_leval = level
+                        this.status = status
                         this.isShowSelf=true;    
                       }, 200);
                   }
@@ -191,7 +193,7 @@ export default {
   },
   data () {
     return {
-      imgs:['http://n.sinaimg.cn/ah/865fe30d/20180408/PaiMingDanChuang.png','http://n.sinaimg.cn/ah/865fe30d/20171102/tpBg.png','http://n.sinaimg.cn/ah/865fe30d/20171024/prize1.png','http://n.sinaimg.cn/ah/865fe30d/20171024/prize2.png','http://n.sinaimg.cn/ah/865fe30d/20171109/prize3.png','http://n.sinaimg.cn/ah/865fe30d/20171024/XuHao.png'],
+      imgs:['http://n.sinaimg.cn/ah/865fe30d/20180408/PaiMingDanChuang.png','http://n.sinaimg.cn/ah/865fe30d/20171102/tpBg.png?12345','http://n.sinaimg.cn/ah/865fe30d/20171024/prize1.png','http://n.sinaimg.cn/ah/865fe30d/20171024/prize2.png','http://n.sinaimg.cn/ah/865fe30d/20171109/prize3.png','http://n.sinaimg.cn/ah/865fe30d/20171024/XuHao.png'],
       isLoading:true,
       progress:0,
       pageList:[1,2,3,4,5],
@@ -258,12 +260,15 @@ export default {
       margin-top: -0.2rem;
   }
   .prizeName,.prizeLeval{
-      width:1.1rem;
-      line-height: 0.33rem;
-      font-size: 0.2rem;
-      font-weight: bold;
-      color: #6b2500;
-      text-align: center;
+      width: 1.1rem;
+    line-height: .33rem;
+    font-size: .2rem;
+    font-weight: 700;
+    color: #6b2500;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
   .prizeLeval{
       width: auto;

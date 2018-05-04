@@ -6,17 +6,18 @@
           </div>
           <div class="mainCont pos_rel" v-if ="!isLoading">
               <div class="pos_abs animate animate1">
-                  <img src="http://n.sinaimg.cn/ah/865fe30d/20171024/subBg.png" alt="">
+                  <img :src="!isForbiden?'http://n.sinaimg.cn/ah/865fe30d/20171024/subBg.png':'http://n.sinaimg.cn/ah/865fe30d/20180503/sub_succ.png'" alt="">
                   <div class="prizeCont pos_abs">
-                      排名:第{{$route.query.prize}}名！
+                      本次总用时:
+                      {{Math.floor($route.query.time/1000)}}'{{$route.query.time%1000}}
                   </div>
-                  <input type="text" v-model="userPhone" class="pos_abs userphone" :disabled="isForbiden">
+                  <input placeholder="输入手机号查看排行" type="text" v-model="userPhone" class="pos_abs userphone" v-if="!isForbiden">
                   <div class="btnList pos_abs">
                       <div class="subBtn animate" v-if="!isForbiden" @click="subPhone">
                           <img src="http://n.sinaimg.cn/ah/865fe30d/20171024/TiJiao.png" alt="">
                       </div>
                       <div class="listBtn" v-else>
-                          <div class="hasSub animate">
+                          <div class="hasSub animate" v-if="!isForbiden">
                               <img src="http://n.sinaimg.cn/ah/865fe30d/20171024/YiTiJiao.png" alt="">
                           </div>
                           <router-link class="resStart animate" to="/">
@@ -43,7 +44,6 @@ export default {
           data:{openid:openId,jsonp:1},
           dataType:'jsonp',
           success:(data)=>{
-              console.log(data);
               if (data.error!=0){
                   alert('网络错误!');
                   return;
@@ -109,7 +109,7 @@ export default {
           width: 4.6rem;
             top: 4.4rem;
             left: 0.7rem;
-            font-size: 0.5rem;
+            font-size: 0.4rem;
             text-align: center;
             font-weight: bold;
             color: #6b2500;
@@ -138,14 +138,17 @@ export default {
   .listBtn{
       width:100%;
       overflow: hidden;
+      display:flex;
+      justify-content: space-around;
+      
   }
   .listBtn>div,.listBtn>a{
       width:1.87rem;
   }
-  .hasSub{
+  /* .hasSub{
       float: left;
   }
   .resStart{
       float: right;
-  }
+  } */
 </style>

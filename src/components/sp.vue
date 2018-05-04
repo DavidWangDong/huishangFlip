@@ -2,7 +2,7 @@
   <div class="page">
       <div class="hover" v-if = "isShowModal">
           <div class="failMsg pos_abs animate" v-if ="modalView=='fail'">
-              <img src='http://n.sinaimg.cn/ah/865fe30d/20171023/fail.png'>
+              <img src='http://n.sinaimg.cn/ah/865fe30d/20171023/fail.png?sdfdf'>
               <input v-model="inputUserPhone" v-if = "userPhone==''" class="getedPhone pos_abs" placeholder="留下手机号参与排名">
               <span class="pos_abs failBTn resBtn" @click="subInfo"></span>
           </div>
@@ -136,6 +136,7 @@ export default {
     gameSta (news) {
       if (news==4){
         this.showModal('fail');
+        this.sendGrade(false);
          clearInterval(this.timer);
          this.timer=null;
       }
@@ -208,7 +209,7 @@ export default {
         name:window.wx_name,
         avatar:window.wx_avatar,
         used:this.usedTime,
-        level:this.gameSta==3?(this.currIndex+1):this.currIndex,
+        level:this.currIndex+1,
         status:this.gameSta==3?1:0,
         jsonp:1
       }
@@ -228,7 +229,7 @@ export default {
               return;
             }
           }
-          isRe&&this.$router.push({path:'/sub',query:{prize:data.data.prize,uid:data.data.id}})
+          isRe&&this.$router.push({path:'/sub',query:{prize:data.data.prize,uid:data.data.id,time:this.usedTime}})
         }
       })
     },
@@ -255,19 +256,7 @@ export default {
         return;
       }
       
-      if (this.gameSta==1){
-        this.lastTimeStamp = Date.now();
-        this.gameSta=2;
-        let timer;
-        !this.timer&&(this.timer = setInterval(()=>{
-                  this.playLeave--;
-                  if (this.playLeave<=0){
-                    this.gameSta!=3&&(this.gameSta=4)
-                    clearInterval(this.timer);
-                    this.timer=null;
-                  }
-                },1000))
-      }
+     
       if (val.act){
         return;
       }
@@ -300,7 +289,7 @@ export default {
             let tmpArr2 = JSON.parse(JSON.stringify(tmpArr));
             let index;
             this.leaveCouple = tmpArr2.length;
-            while ((index = Math.ceil(Math.random()*(tmpArr2.length-1)))>=0&&count>0) {
+            while ((index = Math.floor(Math.random()*(tmpArr2.length)))>=0&&count>0) {
               count-- ;
               
               let innerTmp = tmpArr2.splice(index,1)[0];
@@ -332,7 +321,7 @@ export default {
       let tmpArr = [];
       let sourceArr = JSON.parse(JSON.stringify(this.matePic));
       let index;
-      while ((index = Math.ceil(Math.random()*(sourceArr.length-1)))>=0&&count>0){
+      while ((index = Math.floor(Math.random()*(sourceArr.length)))>=0&&count>0){
         
         count--;
         let src = sourceArr.splice(index,1)[0];
@@ -375,7 +364,7 @@ export default {
   },
   data () {
     return {
-      imgs:['http://n.sinaimg.cn/ah/865fe30d/20180328/frozen.png',"http://n.sinaimg.cn/ah/865fe30d/20180330/round6.png","http://n.sinaimg.cn/ah/865fe30d/20180330/round7.png","http://n.sinaimg.cn/ah/865fe30d/20180330/round8.png","http://n.sinaimg.cn/ah/865fe30d/20180328/alertDetail.png","http://n.sinaimg.cn/ah/865fe30d/20180308/2Miao.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g1.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g2.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g3.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g4.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g5.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g6.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g7.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g8.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g9.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g10.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g11.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g12.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g13.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g14.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g15.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round1.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round2.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round3.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round4.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round5.png","http://n.sinaimg.cn/ah/865fe30d/20171023/2bg.png","http://n.sinaimg.cn/ah/865fe30d/20171023/2.jpg",'http://n.sinaimg.cn/ah/865fe30d/20171023/gb.png','http://n.sinaimg.cn/ah/865fe30d/20171023/fail.png','http://n.sinaimg.cn/ah/865fe30d/20171102/fail22222.png',"http://n.sinaimg.cn/ah/865fe30d/20180123/g16.png","http://n.sinaimg.cn/ah/865fe30d/20180123/g17.png","http://n.sinaimg.cn/ah/865fe30d/20180328/g18.png"],
+      imgs:['http://n.sinaimg.cn/ah/865fe30d/20180328/frozen.png',"http://n.sinaimg.cn/ah/865fe30d/20180330/round6.png","http://n.sinaimg.cn/ah/865fe30d/20180330/round7.png","http://n.sinaimg.cn/ah/865fe30d/20180330/round8.png","http://n.sinaimg.cn/ah/865fe30d/20180328/alertDetail.png","http://n.sinaimg.cn/ah/865fe30d/20180308/2Miao.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g1.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g2.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g3.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g4.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g5.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g6.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g7.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g8.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g9.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g10.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g11.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g12.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g13.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g14.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g15.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round1.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round2.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round3.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round4.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round5.png","http://n.sinaimg.cn/ah/865fe30d/20171023/2bg.png","http://n.sinaimg.cn/ah/865fe30d/20171023/2.jpg",'http://n.sinaimg.cn/ah/865fe30d/20171023/gb.png','http://n.sinaimg.cn/ah/865fe30d/20171023/fail.png?sdfdf','http://n.sinaimg.cn/ah/865fe30d/20171102/fail22222.png',"http://n.sinaimg.cn/ah/865fe30d/20180123/g16.png","http://n.sinaimg.cn/ah/865fe30d/20180123/g17.png","http://n.sinaimg.cn/ah/865fe30d/20180328/g18.png"],
       matePic:["http://n.sinaimg.cn/ah/865fe30d/20171023/g1.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g2.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g3.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g4.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g5.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g6.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g7.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g8.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g9.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g10.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g11.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g12.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g13.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g14.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g15.png","http://n.sinaimg.cn/ah/865fe30d/20180123/g16.png","http://n.sinaimg.cn/ah/865fe30d/20180123/g17.png"],
       pointPic:["http://n.sinaimg.cn/ah/865fe30d/20171023/round1.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round2.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round3.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round4.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round5.png","http://n.sinaimg.cn/ah/865fe30d/20180330/round6.png","http://n.sinaimg.cn/ah/865fe30d/20180330/round7.png","http://n.sinaimg.cn/ah/865fe30d/20180330/round8.png"],
       Checkpoint:[
@@ -398,7 +387,7 @@ export default {
           detailSrc:''
         },
         {
-          obTime:3000,
+          obTime:2000,
           useTime:30000,
           rows:4,
           cols:4,
@@ -407,7 +396,7 @@ export default {
           detailSrc:''
         },
         {
-          obTime:4000,
+          obTime:3000,
           useTime:60000,
           rows:5,
           cols:4,
@@ -416,8 +405,8 @@ export default {
           detailSrc:''
         },
         {
-          obTime:5000,
-          useTime:100000,
+          obTime:3000,
+          useTime:90000,
           rows:6,
           cols:5,
           pics:[],
@@ -612,9 +601,9 @@ export default {
     margin-left: -3.015rem;
   }
   .resBtn{
-    width: 2.49rem;
-    height: 0.96rem;
-    top:3.28rem;
+        width: 2.49rem;
+    height: .96rem;
+    top: 3.44rem;
     left: 1.95rem;
   }
   .fliped{
@@ -644,18 +633,19 @@ export default {
     opacity: 0;
   }
   .getedPhone{
-    width: 3.28rem;
-    top: 2.64rem;
-    left: 1.5rem;
-    height: 0.56rem;
+       width: 4.6rem;
+    top: 2.46rem;
+    left: 0.76rem;
+    height: .78rem;
     border: none;
     background: none;
     background: #e5e0e5;
     text-align: center;
     outline: none;
-    border-radius: 0.16rem;
-    line-height: 0.56rem;
-    box-shadow: 0px 2px #fd9700;
+    border-radius: .16rem;
+    line-height: .56rem;
+    box-shadow: 0 2px #fd9700;
+    font-size:0.3rem;
 
   }
   .alertMsg{
