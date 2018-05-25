@@ -36,6 +36,11 @@ beforeList.push(function(next,arg){
 
 // 显示通知栏
 beforeList.push(function(next,arg){
+    this.currCp.pics.forEach(val => {
+      val.hide && (val.act = false);
+      !val.hide && (val.act = true);
+    });
+
     if (this.Checkpoint[this.currIndex].showAlert){
         this.isPreview = false;
         this.currCp.pics.forEach(val => {
@@ -51,7 +56,7 @@ beforeList.push(function(next,arg){
                 this.hideModal();
                 this.isPreview = true;
                 this.currCp.pics.forEach(val => {
-                  val.act = true;
+                  !val.hide&&(val.act = true);
                 });
                 next();
             }
@@ -75,10 +80,17 @@ beforeList.push(function(next,arg){
 
 // 预览倒计时
 beforeList.push(function(next, arg) {
-  let timer;
-  timer = setInterval(() => {
-    this.StartLeaveTime > 0 && this.StartLeaveTime--;
+  var timers;
+  timers = setInterval(() => {
+    console.log(timers);
+
     if (this.StartLeaveTime == 0) {
+      clearInterval(timers);
+      timers = null;
+    }
+
+    this.StartLeaveTime > 0 && this.StartLeaveTime--;
+    if (this.StartLeaveTime == 1) {
       this.gameSta = 1;
        if (this.gameSta == 1) {
          this.lastTimeStamp = Date.now();
@@ -91,14 +103,15 @@ beforeList.push(function(next, arg) {
                this.timer = null;
              }
            }, 1000));
-       }
-      clearInterval(timer);
-      timer = null;
+       }      
+
       this.currCp.pics.forEach(val => {
         val.act = false;
+        val.hide=false;
       });
       this.isPreview = false;
     }
+    
   }, 1000);
   next();
 });
@@ -182,6 +195,31 @@ afterList.push(function(next,flag,item1,item2){
     next(flag,item1,item2);
 })
 
+function minxinPage(tmpArr, copyTmpArr, transList) {
+
+    const list = [...copyTmpArr];
+    const last = []
+    let real = []
+
+
+    while (1) {
+      if (Math.random() < 0.3) {
+        transList.length > 0 && last.push(transList.pop())
+
+      } else {
+        list.length > 0 && last.push(list.pop())
+      }
+      if (transList.length <= 0 || list.length <= 0) {
+        real = [...last, ...list, ...transList]
+        break;
+      }
+    }
+    tmpArr.length = 0;
+    real.forEach((val) => {
+      tmpArr.push(val);
+    })
+
+}
 
 
 // 获取对应卡片序列
@@ -191,7 +229,10 @@ beforeGetCorrectIndex.push(function(next,tmpArr){
     let level5 = {
         5:2,
         6:4,
-        7:4
+        7:4,
+        8:2,
+        9:4,
+        10:4
     }
     let src = 'http://n.sinaimg.cn/ah/865fe30d/20180328/g18.png'
     
@@ -220,31 +261,31 @@ beforeGetCorrectIndex.push(function(next,tmpArr){
             }
         }
 
-        
-        
-        const list = [...copyTmpArr];
-        const  last = []
-        let  real = []
-
-
-        while(1){
-            if (Math.random()<0.3){
-                transList.length>0&&last.push(transList.pop())
-
-            }else{
-                list.length>0&&last.push(list.pop())
-            }
-            if (transList.length <= 0 || list.length <= 0) {
-                real = [...last,...list,...transList]
-                break;
-            }
-        }
-        tmpArr.length=0;
-        real.forEach((val)=>{
-            tmpArr.push(val);
-        })
+        minxinPage(tmpArr, copyTmpArr, transList);
 
     }
+
+     if (this.currIndex >= 8 && this.currIndex <= 10) {
+       const copyTmpArr = JSON.parse(JSON.stringify(tmpArr));
+       const transList = []
+
+
+
+
+       for (let i = 0, len = level5[this.currIndex] / 2; i < len; i++) {
+         let index = Math.ceil(Math.random() * (copyTmpArr.length - 1))
+         let upSel = copyTmpArr.splice(index, 1)[0];
+         upSel.hide = true;
+         transList.push(JSON.parse(JSON.stringify(upSel)))
+         if (transList.length == level5[this.currIndex]) {
+           break;
+         }
+       }
+
+       minxinPage(tmpArr, copyTmpArr, transList);
+
+     }
+
     next();
 })
 

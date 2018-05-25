@@ -40,9 +40,9 @@
                     
                     <ul class="list before" ref="contains">
                      <li v-for="(val,index) in currCp.pics" :class="['listItem','animate',{'act':val.act},{itemSpecial:Checkpoint[currIndex].cols>=5},{hasFlip:val.act},{fliped:val.isFlip}]"  @click = "flip(val,index)" :ref="'item'+val.index+val.sortIdx" :key="index">
-                        <div class="outer pos_rel">
+                        <div class="outer pos_rel tmpouter">
                           <div class="back animate pos_abs">
-                            <img src="http://n.sinaimg.cn/ah/865fe30d/20171023/gb.png">
+                            <img :src="!val.hide?'http://n.sinaimg.cn/ah/865fe30d/20171023/gb.png':'http://n.sinaimg.cn/ah/865fe30d/20180525/YinCangPaiZi.png'">
                           </div>
                           <div class="front animate pos_abs">
                             <img :src="val.src">
@@ -75,11 +75,12 @@
 import mixin from '@/mixin/'
 import {beforeList,afterList,beforeGetCorrectIndex} from '@/eventList'
 export default {
+
   name: 'sp',
   mixins:[mixin],
   created(){
       // 默认第几关
-      this.currIndex = 0 ;
+      this.currIndex = 8 ;
       let openId = window.wx_id;
       $.ajax({
           url:'http://ahfensitong.com/huishang/fanpai/api.php?action=getMobile',
@@ -114,18 +115,18 @@ export default {
   },
   watch:{
     stepSta (news,olds){
+      
       var item1 = this.tmpCache[0];
       var dom1 = $(this.$refs['item'+item1.index+item1.sortIdx][0]);
       if (news == 2){
         var item2 = this.tmpCache[1];
         var dom2 = $(this.$refs['item'+item2.index+item2.sortIdx][0]);
-      
+        item2&&(item2.act=true);
+        this.eventList.after_dispath(news,item1,item2);
+        
       }
 
       item1.act=true;
-      item2&&(item2.act=true);
-
-      this.eventList.after_dispath(news,item1,item2);
       
     },
     leaveCouple(news,old){
@@ -234,12 +235,26 @@ export default {
       })
     },
     nextPoint (){
-      (this.currIndex<this.Checkpoint.length-1)&&this.currIndex++;
-      this.currCp.pics.forEach((val)=>{
-            val.isFlip=false
-            val.act=false
-      })
-      this.hideModal();
+      $(this.$refs['contains']).find('li').each(function(index,val){
+        $(val).find('.tmpouter').removeClass('outer');
+      });
+      setTimeout(() => {
+           $(this.$refs['contains']).find('li').each(function(index,val){
+              $(val).removeClass('act');
+            });
+           setTimeout(() => {
+                $(this.$refs['contains']).find('li').each(function(index,val){
+                    $(val).find('.tmpouter').addClass('outer');
+                  });
+            });
+          (this.currIndex<this.Checkpoint.length-1)&&this.currIndex++;
+           this.currCp.pics.forEach((val)=>{
+                val.isFlip=false
+                val.act=false
+          })
+          this.hideModal();
+      });
+      
     },
     hideModal(){
       this.isShowModal=false;
@@ -260,6 +275,7 @@ export default {
       if (val.act){
         return;
       }
+      
       this.tmpCache.push(val);
       this.stepSta=this.tmpCache.length;
       val.act = true
@@ -287,6 +303,19 @@ export default {
             let tmpArr = this.getPics(count);
             
             let tmpArr2 = JSON.parse(JSON.stringify(tmpArr));
+            
+            tmpArr2.some((val,index)=>{
+              if (val.hide==true) {
+                tmpArr2[index].hide=false;
+                if (tmpArr2[index-1]) {
+                  tmpArr2[index-1].hide=true;
+                }else{
+                   tmpArr2[tmpArr2.length-1].hide=true;
+                } 
+                return true;
+              }
+            })
+
             let index;
             this.leaveCouple = tmpArr2.length;
             while ((index = Math.floor(Math.random()*(tmpArr2.length)))>=0&&count>0) {
@@ -339,7 +368,7 @@ export default {
         }else{
             correctIndex.correctIndex = trueIndex;
         }
-        tmpArr.push({index:this.matePic.indexOf(src),src:src,correctIndex:correctIndex.correctIndex,act:true,isFlip:false});
+        tmpArr.push({index:this.matePic.indexOf(src),src:src,correctIndex:correctIndex.correctIndex,act:false,isFlip:false,hide:false});
         
       }
       this.eventList.beforeGetCorrectIndex_dispath(tmpArr);
@@ -364,9 +393,9 @@ export default {
   },
   data () {
     return {
-      imgs:['http://n.sinaimg.cn/ah/865fe30d/20180328/frozen.png',"http://n.sinaimg.cn/ah/865fe30d/20180330/round6.png","http://n.sinaimg.cn/ah/865fe30d/20180330/round7.png","http://n.sinaimg.cn/ah/865fe30d/20180330/round8.png","http://n.sinaimg.cn/ah/865fe30d/20180328/alertDetail.png","http://n.sinaimg.cn/ah/865fe30d/20180308/2Miao.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g1.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g2.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g3.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g4.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g5.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g6.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g7.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g8.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g9.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g10.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g11.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g12.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g13.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g14.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g15.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round1.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round2.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round3.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round4.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round5.png","http://n.sinaimg.cn/ah/865fe30d/20171023/2bg.png","http://n.sinaimg.cn/ah/865fe30d/20171023/2.jpg",'http://n.sinaimg.cn/ah/865fe30d/20171023/gb.png','http://n.sinaimg.cn/ah/865fe30d/20171023/fail.png?sdfdf','http://n.sinaimg.cn/ah/865fe30d/20171102/fail22222.png',"http://n.sinaimg.cn/ah/865fe30d/20180123/g16.png","http://n.sinaimg.cn/ah/865fe30d/20180123/g17.png","http://n.sinaimg.cn/ah/865fe30d/20180328/g18.png"],
+      imgs:['http://n.sinaimg.cn/ah/865fe30d/20180328/frozen.png',"http://n.sinaimg.cn/ah/865fe30d/20180330/round6.png","http://n.sinaimg.cn/ah/865fe30d/20180330/round7.png","http://n.sinaimg.cn/ah/865fe30d/20180330/round8.png","http://n.sinaimg.cn/ah/865fe30d/20180328/alertDetail.png","http://n.sinaimg.cn/ah/865fe30d/20180308/2Miao.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g1.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g2.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g3.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g4.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g5.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g6.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g7.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g8.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g9.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g10.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g11.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g12.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g13.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g14.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g15.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round1.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round2.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round3.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round4.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round5.png","http://n.sinaimg.cn/ah/865fe30d/20171023/2bg.png","http://n.sinaimg.cn/ah/865fe30d/20171023/2.jpg",'http://n.sinaimg.cn/ah/865fe30d/20171023/gb.png','http://n.sinaimg.cn/ah/865fe30d/20171023/fail.png?sdfdf','http://n.sinaimg.cn/ah/865fe30d/20171102/fail22222.png',"http://n.sinaimg.cn/ah/865fe30d/20180123/g16.png","http://n.sinaimg.cn/ah/865fe30d/20180123/g17.png","http://n.sinaimg.cn/ah/865fe30d/20180328/g18.png",'http://n.sinaimg.cn/ah/865fe30d/20180525/XinZengDanChuang.png','http://n.sinaimg.cn/ah/865fe30d/20180525/YinCangPaiZi.png'],
       matePic:["http://n.sinaimg.cn/ah/865fe30d/20171023/g1.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g2.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g3.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g4.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g5.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g6.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g7.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g8.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g9.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g10.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g11.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g12.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g13.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g14.png","http://n.sinaimg.cn/ah/865fe30d/20171023/g15.png","http://n.sinaimg.cn/ah/865fe30d/20180123/g16.png","http://n.sinaimg.cn/ah/865fe30d/20180123/g17.png"],
-      pointPic:["http://n.sinaimg.cn/ah/865fe30d/20171023/round1.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round2.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round3.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round4.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round5.png","http://n.sinaimg.cn/ah/865fe30d/20180330/round6.png","http://n.sinaimg.cn/ah/865fe30d/20180330/round7.png","http://n.sinaimg.cn/ah/865fe30d/20180330/round8.png"],
+      pointPic:["http://n.sinaimg.cn/ah/865fe30d/20171023/round1.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round2.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round3.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round4.png","http://n.sinaimg.cn/ah/865fe30d/20171023/round5.png","http://n.sinaimg.cn/ah/865fe30d/20180330/round6.png","http://n.sinaimg.cn/ah/865fe30d/20180330/round7.png","http://n.sinaimg.cn/ah/865fe30d/20180330/round8.png",'http://n.sinaimg.cn/ah/865fe30d/20180525/round9.png','http://n.sinaimg.cn/ah/865fe30d/20180525/round10.png','http://n.sinaimg.cn/ah/865fe30d/20180525/round11.png'],
       Checkpoint:[
         {
           obTime:1000,
@@ -436,7 +465,32 @@ export default {
           pics:[],
           showAlert:false,
           detailSrc:''
+        },{
+          obTime:2000,
+          useTime:20000,
+          rows:3,
+          cols:4,
+          pics:[],
+          showAlert:true,
+          detailSrc:'http://n.sinaimg.cn/ah/865fe30d/20180525/XinZengDanChuang.png'
+        },{
+          obTime:3000,
+          useTime:40000,
+          rows:5,
+          cols:4,
+          pics:[],
+          showAlert:false,
+          detailSrc:''
+        },{
+          obTime:3000,
+          useTime:80000,
+          rows:6,
+          cols:5,
+          pics:[],
+          showAlert:false,
+          detailSrc:''
         }
+
       ],
       currCp:{
           obTime:3000,
@@ -650,7 +704,7 @@ export default {
   }
   .alertMsg{
     width:5.67rem;
-    height:6.3rem;
+    /* height:6.3rem; */
     top:50%;
     margin-top:-3.15rem;
     left:50%;

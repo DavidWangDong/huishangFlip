@@ -93,6 +93,7 @@ export default {
   methods:{
       toLast(){
           this.currPage=this.maxPage;
+          this.getDataList();
       },
       reSetNav (news) {
           if (news==1){

@@ -17,35 +17,35 @@
 		</script>			
   </head>
 
-<?php
-  
-			  include_once('./authorization.php');
-			  $pagei = isset($_GET['page'])&&$_GET['page'] ? $_GET['page'] : 1;
-			  // var_dump($_SESSION['wx_uid']);die;
-			  if ( !$_SESSION['wx_uid'] ) {
-				  // echo "0000";die;
-					  // $nickname = $userinfo->nickname;
-					  // $wx_id = $userinfo->openid;
-					  // $wx_name = $nickname ? $nickname : 'wx匿名';
-					  // $headimgurl = $userinfo->headimgurl;
-  
-					  echo '<script>document.location = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx6bc334ebab8ff5bb&redirect_uri=http%3A%2F%2Fahfensitong.com%2Fhuishang%2Ffanpai%2Findex.php%3Fpage%3D&response_type=code&scope=snsapi_userinfo&state=2016jrpx#wechat_redirect";</script>';
-					  exit();
-					  
-			  } else {
-					  $wx_id = $_SESSION['wx_uid'];
-					  $wx_name = $_SESSION['wx_uname'];
-					  $headimgurl = $_SESSION['wx_headimgurl'];
-			  }
-	?>
+
 	
-  <script>
-    window.wx_id = '<?php echo $wx_id;?>';
-    window.wx_name = '<?php echo $wx_name;?>';
-    window.wx_avatar = '<?php echo $headimgurl;?>';
+<?php
+	  
+				  include_once('./authorization.php');
+				  $pagei = isset($_GET['page'])&&$_GET['page'] ? $_GET['page'] : 1;
+				  // var_dump($_SESSION['wx_uid']);die;
+				  if ( !$_SESSION['wx_uid'] ) {
+					  // echo "0000";die;
+						  // $nickname = $userinfo->nickname;
+						  // $wx_id = $userinfo->openid;
+						  // $wx_name = $nickname ? $nickname : 'wx匿名';
+						  // $headimgurl = $userinfo->headimgurl;
+	  
+						  echo '<script>document.location = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx6bc334ebab8ff5bb&redirect_uri=http%3A%2F%2Fahfensitong.com%2Fhuishang%2Ffanpai%2Findex.php%3Fpage%3D&response_type=code&scope=snsapi_userinfo&state=2016jrpx#wechat_redirect";</script>';
+						  exit();
+						  
+				  } else {
+						  $wx_id = $_SESSION['wx_uid'];
+						  $wx_name = $_SESSION['wx_uname'];
+						  $headimgurl = $_SESSION['wx_headimgurl'];
+				  }
+		?>
 
-  </script>
-
+<script>
+	window.wx_id = '<?php echo $wx_id;?>';
+	window.wx_name = '<?php echo $wx_name;?>';
+	window.wx_avatar = '<?php echo $headimgurl;?>';
+</script>
 
 
   <body>
